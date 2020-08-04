@@ -16,8 +16,8 @@ for review_list in json_dict['list']:
     pos = okt.pos(review_text, norm=True, stem=True)
     pos_str = ''
     for pos_elem in pos:
-        if pos_elem[1] == 'Josa':
-            continue
+        '''if pos_elem[1] == 'Josa':
+            continue'''
         pos_str += ' ' + pos_elem[0]
     if not pos_str == '':
         konlpy_dict['pos'] = pos_str
@@ -50,5 +50,5 @@ for review_list in json_dict['list']:
         konlpy_list.append(konlpy_dict_2)'''
 save_dict = dict()
 save_dict['list'] = konlpy_list
-with open('json/train_list_tfidf_no_josa.json', 'w', encoding='utf-8') as make_file:
+with open('json/train_list_tfidf.json', 'w', encoding='utf-8') as make_file:
     json.dump(save_dict, make_file, indent='\t', ensure_ascii=False)

@@ -4,6 +4,7 @@ import numpy as np
 import os
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
 from gensim.models import Word2Vec
 from tensorflow.keras import models
 from tensorflow.keras import layers
@@ -59,9 +60,9 @@ def get_train_data(json_dict, tfidf, sentences):
     return [train_list, label_list]
 
 
-def start_train(train_list, label_list):
+def start_train(train_list, label_list, split):
     model = models.Sequential()
-    model.add(layers.Dense(64, activation='relu', input_shape=(6669,)))
+    model.add(layers.Dense(64, activation='relu', input_shape=(7742,)))
     model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
 
@@ -69,8 +70,13 @@ def start_train(train_list, label_list):
                   loss=losses.binary_crossentropy,
                   metrics=[metrics.binary_accuracy])
 
-    model.fit(train_list, label_list, epochs=10, batch_size=512)
+    if split == True:
+        train_list, train_test, label_list, label_test = train_test_split(train_list, label_list, test_size=0.2, shuffle=True, random_state=1026)
+        model.fit(train_list, label_list, epochs=10, batch_size=512)
+        print(model.evaluate(train_test, label_test))
+        return model
 
+    model.fit(train_list, label_list, epochs=10, batch_size=512)
     return model
 
 
@@ -89,7 +95,7 @@ def predict_data(model, tfidf, sentence):
 
 
 def model_save(model):
-    model.save('review_model.h5')
+    model.save('tensorflow/review_model.h5')
 
 
 def model_load():
