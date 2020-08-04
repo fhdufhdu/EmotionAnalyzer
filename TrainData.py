@@ -62,7 +62,7 @@ def get_train_data(json_dict, tfidf, sentences):
 
 def start_train(train_list, label_list, split):
     model = models.Sequential()
-    model.add(layers.Dense(64, activation='relu', input_shape=(7742,)))
+    model.add(layers.Dense(64, activation='relu', input_shape=(7743,)))
     model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
 
