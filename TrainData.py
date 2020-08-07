@@ -25,8 +25,9 @@ def get_json(path):
 
 def get_sentences(json_dict):
     sentences = []
-    for dict_list in json_dict['list']:
-        sentences.append(dict_list['pos'])
+    for prod_list in json_dict['list']:
+        for review_list in prod_list['review_list']:
+            sentences.append(review_list['tf-idf'])
 
     return sentences
 
@@ -47,11 +48,13 @@ def get_vector(tfidf, sentences):
 
 def get_train_data(json_dict, tfidf, sentences):
     label_list = []
-    for dict_list in json_dict['list']:
-        if int(dict_list['grade']) < 4:
-            label_list.append(0)
-        else:
-            label_list.append(1)
+    for prod_list in json_dict['list']:
+        for review_list in prod_list['review_list']:
+            if int(review_list['grade']) < 4:
+                label_list.append(0)
+            else:
+                label_list.append(1)
+
     train_list = get_vector(tfidf, sentences)
 
     train_list = np.asarray(train_list).astype('float32')
@@ -62,7 +65,7 @@ def get_train_data(json_dict, tfidf, sentences):
 
 def start_train(train_list, label_list, split):
     model = models.Sequential()
-    model.add(layers.Dense(64, activation='relu', input_shape=(7743,)))
+    model.add(layers.Dense(64, activation='relu', input_shape=(6892,)))
     model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
 
@@ -72,11 +75,11 @@ def start_train(train_list, label_list, split):
 
     if split == True:
         train_list, train_test, label_list, label_test = train_test_split(train_list, label_list, test_size=0.2, shuffle=True, random_state=1026)
-        model.fit(train_list, label_list, epochs=10, batch_size=512)
+        model.fit(train_list, label_list, epochs=10, batch_size=32)
         print(model.evaluate(train_test, label_test))
         return model
 
-    model.fit(train_list, label_list, epochs=10, batch_size=512)
+    model.fit(train_list, label_list, epochs=10, batch_size=32)
     return model
 
 
