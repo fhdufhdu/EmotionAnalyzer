@@ -83,12 +83,15 @@ def start_train(train_list, label_list, split):
     return model
 
 
-def predict_data(model, tfidf, sentence):
-    okt = Okt()
-    pos = okt.pos(sentence, norm=True, stem=True)
-    pos_str = ''
-    for pos_elem in pos:
-        pos_str += ' ' + pos_elem[0]
+def predict_data(model, tfidf, sentence, tagging):
+    pos_str = sentence
+    if tagging:
+        okt = Okt()
+        pos = okt.pos(sentence, norm=True, stem=True)
+        pos_str = ''
+        for pos_elem in pos:
+            pos_str += ' ' + pos_elem[0]
+
     test = tfidf.transform([pos_str]).toarray()
 
     data = np.expand_dims(np.asarray(test[0]).astype('float32'), axis=0)
